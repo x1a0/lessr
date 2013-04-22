@@ -15,7 +15,7 @@ CSS_DIR      = Path.join SPACE, "css"
 CSS_FILE     = Path.join CSS_DIR, "sub", "test.css"
 
 # enlarge this value if test fails due to host performance
-DELAY        = 200
+DELAY        = 1000
 
 wait = (delay, fn, args...) ->
     run = -> fn.apply null, args
