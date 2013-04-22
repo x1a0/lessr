@@ -1,0 +1,23 @@
+{
+  "name": "lessit",
+  "version": "0.0.1",
+  "description": "Watch less files and compile into css.",
+  "main": "./out/lib/lessit.js",
+  "repository": "",
+  "keywords": [
+    "less",
+    "watch"
+  ],
+  "author": "x1a0 <zhangxiao@xzhang.net>",
+  "license": "BSD",
+  "devDependencies": {
+    "coffee-script": "~1.6.2",
+    "mocha": "~1.9.0"
+  },
+  "dependencies": {
+    "watchr": "~2.4.3",
+    "less": "~1.3.3",
+    "async": "~0.2.7",
+    "mkdirp": "~0.3.5"
+  }
+}
