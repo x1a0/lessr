@@ -15,7 +15,7 @@ CSS_DIR      = Path.join SPACE, "css"
 CSS_FILE     = Path.join CSS_DIR, "sub", "test.css"
 
 # enlarge this value if test fails due to host performance
-DELAY        = 1000
+DELAY        = process.env.TIMEOUT ? 200
 
 wait = (delay, fn, args...) ->
     run = -> fn.apply null, args
@@ -39,6 +39,8 @@ describe "Lessr", ->
     after clean
 
     it "should compile new .less files", (done) ->
+        this.timeout 3 * DELAY
+
         Async.waterfall [
             # make sure dir tree exists
             (next) ->
@@ -63,6 +65,8 @@ describe "Lessr", ->
             done err
 
     it "should re-compile if .less files are modified", (done) ->
+        this.timeout 2 * DELAY
+
         Async.waterfall [
             # load example.less
             (next) ->
@@ -95,6 +99,8 @@ describe "Lessr", ->
             done err
 
     it "should remove the .css file if corresponding .less file is deleted", (done) ->
+        this.timeout 2 * DELAY
+
         Async.waterfall [
             # remove .less file
             (next) ->
