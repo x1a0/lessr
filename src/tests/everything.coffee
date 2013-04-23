@@ -70,27 +70,27 @@ describe "Lessr", ->
         Async.waterfall [
             # load example.less
             (next) ->
-                Fs.readFile EXAMPLE_LESS, {encoding: "utf8"}, next
+                Fs.readFile EXAMPLE_LESS, next
 
             # append less codes to .less file created previously meanwhile compile them
             (data, next) ->
                 Async.parallel {
                     append: (next) ->
-                        Fs.appendFile LESS_FILE, data, (err) ->
+                        Fs.appendFile LESS_FILE, data.toString(), (err) ->
                             # wait for Lessr to work
                             wait DELAY, ->
                                 next err
 
                     less: (next) ->
-                        Less.render data, next
+                        Less.render data.toString(), next
 
                 }, (err, results) ->
                     next err, results.less
 
             # check re-compiled .css file
             (expected, next) ->
-                Fs.readFile CSS_FILE, {encoding: "utf8"}, (err, actual) ->
-                    next err, actual, expected
+                Fs.readFile CSS_FILE, (err, actual) ->
+                    next err, actual.toString(), expected
 
             (actual, expected, next) ->
                 Assert.equal actual, expected
