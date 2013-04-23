@@ -35,7 +35,9 @@ watch = (src, dst, opts, next) ->
                     when "update" then onUpdate path, curr, prev, finish
                     when "delete" then onDelete path, prev, finish
 
-        next: next
+        next: (err, watcher) ->
+            console.log "Watcher has been setup"
+            next err
     }
 
     finish = (err) ->

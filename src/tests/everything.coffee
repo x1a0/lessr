@@ -13,10 +13,9 @@ LESS_DIR     = Path.join SPACE, "less"
 LESS_FILE    = Path.join LESS_DIR, "sub", "test.less"
 CSS_DIR      = Path.join SPACE, "css"
 CSS_FILE     = Path.join CSS_DIR, "sub", "test.css"
-TRAVIS       = process.env.TRAVIS_NODE_VERSION?
 
 # enlarge this value if test fails due to host performance
-DELAY        = if TRAVIS then 10000 else process.env.TIMEOUT ? 200
+DELAY        = process.env.TIMEOUT ? 200
 
 wait = (delay, fn, args...) ->
     run = -> fn.apply null, args
