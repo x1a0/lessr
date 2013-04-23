@@ -15,11 +15,9 @@ CSS_DIR      = Path.join SPACE, "css"
 CSS_FILE     = Path.join CSS_DIR, "sub", "test.css"
 
 # enlarge this value if test fails due to host performance
-DELAY        = process.env.TIMEOUT ? 200
+DELAY        = process.env.DELAY ? 200
 
-wait = (delay, fn, args...) ->
-    run = -> fn.apply null, args
-    setTimeout run, delay
+wait = (milliseconds, func) -> setTimeout func, milliseconds
 
 # init test space
 setup = (next) ->
@@ -27,7 +25,9 @@ setup = (next) ->
         next err if err
 
         # start watching
-        Lessr.watch LESS_DIR, CSS_DIR, next
+        Lessr.watch LESS_DIR, {output: CSS_DIR}
+        wait DELAY, ->
+            next null
 
 # destroy test space 
 clean = (next) ->
@@ -45,14 +45,15 @@ describe "Lessr", ->
             # make sure dir tree exists
             (next) ->
                 Mkdirp Path.dirname(LESS_FILE), (err, dir) ->
-                    # @TODO wait for Watchr ???
-                    wait DELAY, next, err
+                    wait DELAY, ->
+                        next err
 
             # create new .less file
             (next) ->
                 Fs.writeFile LESS_FILE, "", (err) ->
                     # wait for Lessr to work
-                    wait DELAY, next, err
+                    wait DELAY, ->
+                        next err
 
             # check compiled .css file
             (next) ->
@@ -78,7 +79,8 @@ describe "Lessr", ->
                     append: (next) ->
                         Fs.appendFile LESS_FILE, data, (err) ->
                             # wait for Lessr to work
-                            wait DELAY, next, err
+                            wait DELAY, ->
+                                next err
 
                     less: (next) ->
                         Less.render data, next
@@ -106,7 +108,8 @@ describe "Lessr", ->
             (next) ->
                 Fs.unlink LESS_FILE, (err) ->
                     # wait for Lessr to work
-                    wait DELAY, next, err
+                    wait DELAY, ->
+                        next err
 
             # check .css file
             (next) ->
