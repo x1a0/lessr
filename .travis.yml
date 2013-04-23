@@ -8,4 +8,4 @@ node_js:
 notifications:
     irc:
         - "irc.freenode.net#x1a0"
-
+    email: false
