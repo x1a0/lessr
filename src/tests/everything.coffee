@@ -15,7 +15,7 @@ CSS_DIR      = Path.join SPACE, "css"
 CSS_FILE     = Path.join CSS_DIR, "sub", "test.css"
 
 # enlarge this value if test fails due to host performance
-DELAY        = process.env.DELAY ? 200
+DELAY        = process.env.DELAY ? 500
 
 wait = (milliseconds, func) -> setTimeout func, milliseconds
 
@@ -26,8 +26,7 @@ setup = (next) ->
 
         # start watching
         Lessr.watch LESS_DIR, {output: CSS_DIR}
-        wait DELAY, ->
-            next null
+        next null
 
 # destroy test space 
 clean = (next) ->
