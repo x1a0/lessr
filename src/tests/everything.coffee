@@ -1,27 +1,26 @@
-Fs      = require 'fs'
-Path    = require 'path'
-Assert  = require 'assert'
-{spawn} = require 'child_process'
-Async   = require 'async'
-Mkdirp  = require 'mkdirp'
-Less    = require 'less'
-Lessr   = require '../lib/lessr'
+Fs            = require 'fs'
+Path          = require 'path'
+Assert        = require 'assert'
+{exec, spawn} = require 'child_process'
+Async         = require 'async'
+Less          = require 'less'
+Lessr         = require '../lib/lessr'
 
 EXAMPLE_LESS = Path.join __dirname, "example.less"
-SPACE        = Path.join __dirname, "run"
+SPACE        = Path.join __dirname, "out"
 LESS_DIR     = Path.join SPACE, "less"
 LESS_FILE    = Path.join LESS_DIR, "sub", "test.less"
 CSS_DIR      = Path.join SPACE, "css"
 CSS_FILE     = Path.join CSS_DIR, "sub", "test.css"
 
 # enlarge this value if test fails due to host performance
-DELAY        = process.env.DELAY ? 500
+DELAY        = process.env.DELAY ? 200
 
 wait = (milliseconds, func) -> setTimeout func, milliseconds
 
 # init test space
 setup = (next) ->
-    Mkdirp LESS_DIR, (err, dir) ->
+    exec "mkdir -p #{LESS_DIR}", (err) ->
         next err if err
 
         # start watching
@@ -43,7 +42,7 @@ describe "Lessr", ->
         Async.waterfall [
             # make sure dir tree exists
             (next) ->
-                Mkdirp Path.dirname(LESS_FILE), (err, dir) ->
+                exec "mkdir -p #{Path.dirname LESS_FILE}", (err) ->
                     wait DELAY, ->
                         next err
 

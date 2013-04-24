@@ -21,7 +21,7 @@ done = (err) ->
 # remove all non-revisioned objects
 cleanall = (next) ->
     cmd = "rm"
-    args = ["-rf", OUT, Path.join(APP, "node_modules"), Path.join(SRC, "tests", "run")]
+    args = ["-rf", OUT, Path.join(APP, "node_modules"), Path.join(SRC, "tests", "out")]
     spawn(cmd, args, {stdio: "inherit", cwd: APP}).on "exit", next
 
 task "cleanall", "clean up everything!", ->
