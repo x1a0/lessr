@@ -9,6 +9,9 @@ exports.watch = (source, opts) ->
     OUTPUT      = opts?.output ? null
     ROOT        = Path.normalize source
 
+    OPTIONS     =
+        compress: opts?.compress ? no
+
     # Compile a path, which could be a file or a directory. If a directory is passed,
     # recursively compile all .less files in it and all subdirectories.
     compilePath = (source, is_root) ->
@@ -47,7 +50,7 @@ exports.watch = (source, opts) ->
 
         Fs.readFile source, (err, code) ->
             errHandler err if err
-            Less.render code.toString(), (err, css) ->
+            Less.render code.toString(), opts, (err, css) ->
                 return errHandler err if err
 
                 css_path = outputPath source

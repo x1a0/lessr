@@ -24,7 +24,7 @@ setup = (next) ->
         next err if err
 
         # start watching
-        Lessr.watch LESS_DIR, {output: CSS_DIR}
+        Lessr.watch LESS_DIR, {output: CSS_DIR, compress: yes}
         next null
 
 # destroy test space 
@@ -81,7 +81,7 @@ describe "Lessr", ->
                                 next err
 
                     less: (next) ->
-                        Less.render data.toString(), next
+                        Less.render data.toString(), {compress: yes}, next
 
                 }, (err, results) ->
                     next err, results.less
