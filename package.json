@@ -1,6 +1,6 @@
 {
   "name": "lessr",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Watch less files and compile into css.",
   "main": "lib/lessr",
   "repository": {
