@@ -4,7 +4,7 @@ Assert        = require 'assert'
 {exec, spawn} = require 'child_process'
 Async         = require 'async'
 Less          = require 'less'
-Lessr         = require '../lib/lessr'
+Lessr         = require '../src/lessr'
 
 EXAMPLE_LESS = Path.join __dirname, "example.less"
 SPACE        = Path.join __dirname, "out"

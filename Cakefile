@@ -3,12 +3,12 @@ NODE    = process.execPath
 NPM     = if WINDOWS then process.execPath.replace('node.exe','npm.cmd') else 'npm'
 EXT     = (if WINDOWS then '.cmd' else '')
 APP     = process.cwd()
-TESTS   = "#{APP}/src/tests"
+TESTS   = "#{APP}/tests"
 BIN     = "#{APP}/node_modules/.bin"
 CAKE    = "#{BIN}/cake#{EXT}"
 COFFEE  = "#{BIN}/coffee#{EXT}"
 MOCHA   = "#{BIN}/mocha#{EXT}"
-OUT     = "#{APP}/out"
+OUT     = "#{APP}/lib"
 SRC     = "#{APP}/src"
 
 Path = require 'path'
@@ -21,7 +21,7 @@ done = (err) ->
 # remove all non-revisioned objects
 cleanall = (next) ->
     cmd = "rm"
-    args = ["-rf", OUT, Path.join(APP, "node_modules"), Path.join(SRC, "tests", "out")]
+    args = ["-rf", OUT, Path.join(APP, "node_modules"), Path.join(TESTS, "out")]
     spawn(cmd, args, {stdio: "inherit", cwd: APP}).on "exit", next
 
 task "cleanall", "clean up everything!", ->
