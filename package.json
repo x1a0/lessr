@@ -1,8 +1,8 @@
 {
-  "name": "lessit",
+  "name": "lessr",
   "version": "0.0.1",
   "description": "Watch less files and compile into css.",
-  "main": "./out/lib/lessit.js",
+  "main": "./out/lib/lessr.js",
   "repository": "",
   "keywords": [
     "less",
