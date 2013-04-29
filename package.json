@@ -2,7 +2,7 @@
   "name": "lessr",
   "version": "0.0.1",
   "description": "Watch less files and compile into css.",
-  "main": "./lib/lessr.js",
+  "main": "lib/lessr",
   "repository": "",
   "keywords": [
     "less",
@@ -19,6 +19,12 @@
     "less": "~1.3.3"
   },
   "scripts": {
+    "build": "coffee -blco lib src",
+    "prepublish": "coffee -blco lib src",
+    "postpublish": "rm -rf lib",
     "test": "node_modules/.bin/mocha --compilers coffee:coffee-script tests/"
+  },
+  "engines": {
+      "node": ">= 0.8.0"
   }
 }

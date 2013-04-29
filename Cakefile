@@ -39,7 +39,7 @@ task "clean", "clean up", ->
 
 # compile coffee-script to javascript
 compile = (next) ->
-	spawn(COFFEE, ["-bco", OUT, SRC], {stdio: "inherit", cwd: APP}).on "exit", next
+	spawn(COFFEE, ["-blco", OUT, SRC], {stdio: "inherit", cwd: APP}).on "exit", next
 
 task "compile", "compile coffee-script to javascript", ->
     compile done
