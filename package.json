@@ -3,7 +3,10 @@
   "version": "0.0.1",
   "description": "Watch less files and compile into css.",
   "main": "lib/lessr",
-  "repository": "",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/zhangxiao/lessr.git"
+  },
   "keywords": [
     "less",
     "watch"
