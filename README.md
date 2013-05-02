@@ -1,4 +1,4 @@
-# Lessr - less watcher and compiler.
+# Lessr - watch and compile less codes.
 
 [![Build Status](https://travis-ci.org/zhangxiao/lessr.png)](https://travis-ci.org/zhangxiao/lessr)
 
@@ -8,7 +8,7 @@ You can install it via `npm install lessr` and simply use it by `require('lessr'
 
 * `output` Specify base path for saving the generated css files. If not given, css file will be sitting next to corresponding less file.
 
-* `compress` Set to `true` if you want to compress the css codes (doesn't mean combined).
+* `compress` Set to `true` if you want to compress the css codes. It doesn't mean to combine the css codes. If you want to combine them, use @import directive in Less.
 
 * `watch` Specify paths you want to watch and when they change it automatically re-compiles sources.
 
