@@ -8,15 +8,15 @@ exports.compile = (source, opts) ->
         compile: [] # .less files to be compiled
         watch:   [] # .less files to be watched
         ignore:  {} # files to be ignored
+        base:    {} # remember base of each file to be compiled
 
-    ROOT   = Path.normalize source
     OUTPUT = opts?.output ? null
     OPTIONS =
         compress: opts?.compress ? no
 
     # Walk a path, which could be a file or a dir. If a dir is passed,
     # recursively compile all .less files in it and walk all sub dirs.
-    walkPath = (path, type) ->
+    walkPath = (path, type, base) ->
         Fs.stat path, (err, stats) ->
 
             # The path should always exist if passed to this method.
@@ -27,7 +27,7 @@ exports.compile = (source, opts) ->
 
             if stats.isDirectory()
                 # If path is a dir, watch it for changing.
-                watchDir path, type
+                watchDir path, type, base
 
                 # Go through all items in the dir.
                 Fs.readdir path, (err, files) ->
@@ -42,26 +42,28 @@ exports.compile = (source, opts) ->
                     # with items under it.
                     index = SOURCES[type].indexOf path
                     SOURCES[type][index..index] = (Path.join path, file for file in files)
+                    SOURCES.base[path] = base if not SOURCES.base[path]?
 
                     # recursively walk on each child
-                    walkPath Path.join(path, file), type for file in files
+                    walkPath Path.join(path, file), type, base for file in files
 
             else if isLess path
-                # For a less file compile and watch it.
-                watchFile path, type
-
                 # Add it to SOURCES if not yet (happens when it's the given source)
                 SOURCES[type].push path if SOURCES[type].indexOf(path) is -1
+                SOURCES.base[path] = base if not SOURCES.base[path]?
+
+                # For a less file compile and watch it.
+                watchFile path, type
 
                 compileLess path if type is "compile"
 
             else
                 # For a non less file add it to ignore set.
-                SOURCES["ignore"][path] = yes
+                SOURCES.ignore[path] = yes
 
 
     # Watch a dir for changing.
-    watchDir = (dir, type) ->
+    watchDir = (dir, type, base) ->
         timer = null
         try
             watcher = Fs.watch dir, ->
@@ -74,14 +76,16 @@ exports.compile = (source, opts) ->
                             watcher.close()
                             return unwatchDir dir, type
 
-                        for file in files when not hidden(file) and not SOURCES["ignore"][file]
+                        for file in files when not hidden(file) and not SOURCES.ignore[file]
                             path = Path.join dir, file
 
                             # Skip if the path or any sub-path is already in sources set.
                             continue if SOURCES[type].some (s) -> s.indexOf(path) >= 0
 
                             SOURCES[type].push path
-                            walkPath path, type
+                            SOURCES.base[path] = base if not SOURCES.base[path]?
+
+                            walkPath path, type, base
 
         catch err
             throw err unless err.code? is "ENOENT"
@@ -90,21 +94,23 @@ exports.compile = (source, opts) ->
     unwatchDir = (dir, type) ->
         prev_sources = SOURCES[type][..]
         to_remove = (file for file in SOURCES[type] when file.indexOf(dir) >= 0)
-        removeSource file, yes for file in to_remove
+        removeSource file, type for file in to_remove
 
     # Remove given source file in SOURCES. If it's removing a to-compile source
     # remove the corresponding compiled css file.
-    removeSource = (source, type) ->
-        index = SOURCES[type].indexOf source
+    removeSource = (path, type) ->
+        index = SOURCES[type].indexOf path
         SOURCES[type].splice index, 1 if index >= 0
+        base = SOURCES.base[path]
+        delete SOURCES.base[path]
 
         if type is "compile"
-            css_path = getCssPath source
+            css_path = getCssPath path, base
             Fs.exists css_path, (exists) ->
                 return if not exists
                 Fs.unlink css_path, (err) ->
                     throw err if err and err.code isnt "ENOENT"
-                    log "removed #{source}"
+                    log "removed #{path}"
 
     # Watch a file for changing.
     watchFile = (path, type) ->
@@ -167,7 +173,7 @@ exports.compile = (source, opts) ->
                 return errHandler err if err
 
                 # Generate output path of current file.
-                css_path = getCssPath path
+                css_path = getCssPath path, SOURCES.base[path]
                 css_dir  = Path.dirname css_path
 
                 # Func to write css file.
@@ -188,9 +194,9 @@ exports.compile = (source, opts) ->
     # Get path of an output CSS file. If there is no output base dir specified in options
     # then the compiled css file should sit next to the less file. Otherwise the css file
     # should be in the specified output location and keep the relative sub path.
-    getCssPath = (path) ->
+    getCssPath = (path, base) ->
         src_dir = Path.dirname path
-        out_dir = if OUTPUT then Path.join(OUTPUT, src_dir.substring ROOT.length) else src_dir
+        out_dir = if OUTPUT then Path.join(OUTPUT, src_dir.substring base.length) else src_dir
         "#{Path.join out_dir, Path.basename(path, ".less")}.css"
 
     # Helpers
@@ -206,12 +212,12 @@ exports.compile = (source, opts) ->
     # kickoff
     source = [source] if typeof source is "string"
     for one in source
-        walkPath one, "compile"
+        walkPath one, "compile", Path.normalize(Path.dirname one)
 
     if opts?.watch?
         opts.watch = [opts.watch] if Object.prototype.toString.call(opts.watch) isnt "[object Array]"
-        for item in opts.watch
-            walkPath item, "watch"
+        for one in opts.watch
+            walkPath one, "watch", Path.normalize(Path.dirname one)
 
     @SOURCES = SOURCES
     return @
