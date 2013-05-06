@@ -101,11 +101,9 @@ exports.compile = (source, opts) ->
     removeSource = (path, type) ->
         index = SOURCES[type].indexOf path
         SOURCES[type].splice index, 1 if index >= 0
-        base = SOURCES.base[path]
-        delete SOURCES.base[path]
 
         if type is "compile"
-            css_path = getCssPath path, base
+            css_path = getCssPath path, SOURCES.base[path]
             Fs.exists css_path, (exists) ->
                 return if not exists
                 Fs.unlink css_path, (err) ->
