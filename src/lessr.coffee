@@ -204,7 +204,9 @@ exports.compile = (source, opts) ->
         console.log "#{(new Date).toLocaleTimeString()} - #{message}"
 
     # kickoff
-    walkPath source, "compile"
+    source = [source] if typeof source is "string"
+    for one in source
+        walkPath one, "compile"
 
     if opts?.watch?
         opts.watch = [opts.watch] if Object.prototype.toString.call(opts.watch) isnt "[object Array]"
